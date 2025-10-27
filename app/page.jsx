@@ -164,6 +164,37 @@ export default function Page() {
     return { title, keywords: addBulkKeywords(kws) };
   };
 
+  // AI-powered title and keyword generation (Gemini)
+const analyzeFileWithAI = async (file) => {
+  if (!apiKey) return analyzeFromFilename(file);
+
+  try {
+    const base = fromFilenameToWords(file.name);
+    const prompt = Generate a descriptive title and ${kwCount} SEO keywords for this image named "${base}". Output as JSON with {title: "...", keywords: ["..."]};
+    
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
+
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const parsed = JSON.parse(text);
+    return {
+      title: buildTitle(parsed.title),
+      keywords: cleanKeywords(addBulkKeywords(parsed.keywords)),
+    };
+  } catch (err) {
+    console.error("Gemini AI failed:", err);
+    return analyzeFromFilename(file);
+  }
+};
   // ----------------- CSV Schema by Platform -----------------
  const recordForPlatform = ({ file, meta }) => {
   const p = platform || "General"; // ensures correct active platform
@@ -226,7 +257,7 @@ export default function Page() {
     const out = [];
     for (const f of files) {
       try {
-        const meta = analyzeFromFilename(f);
+        const meta = await analyzeFileWithAI(f);
         out.push({ fileId: f.id, meta });
         setProgress((p) => ({ ...p, success: p.success + 1 }));
       } catch {
