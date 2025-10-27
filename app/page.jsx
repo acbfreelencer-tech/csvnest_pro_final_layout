@@ -188,7 +188,7 @@ const analyzeFileWithAI = async (file) => {
     const parsed = JSON.parse(text);
     return {
       title: buildTitle(parsed.title),
-      keywords: cleanKeywords(addBulkKeywords(parsed.keywords)),
+      keywords: cleanKeywords(addBulkKeywords(parsed.keywords))
     };
   } catch (err) {
     console.error("Gemini AI failed:", err);
