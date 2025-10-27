@@ -165,27 +165,58 @@ export default function Page() {
   };
 
   // ----------------- CSV Schema by Platform -----------------
-  const recordForPlatform = ({ file, meta }) => {
-    const common = {
-      filename: file.name,
-      title: meta.title,
-      keywords: meta.keywords.join(", "),
-      type: file.kind,
-      imageType,
-    };
-    switch (platform) {
-      case "Adobe Stock":
-        return { Filename: common.filename, Title: common.title, Keywords: common.keywords, Category: "", Releases: "", Illustration: imageType === "Vector" ? "Yes" : "" };
-      case "Freepik":
-        return { file: common.filename, title: common.title, tags: common.keywords, license: "standard", type: imageType.toLowerCase() || "none" };
-      case "Shutterstock":
-        return { Filename: common.filename, Description: common.title, Keywords: common.keywords, Editorial: "no", Category: "" };
-      case "Vecteezy":
-        return { file_name: common.filename, title: common.title, keywords: common.keywords, media_type: common.type.toLowerCase() };
-      default:
-        return { filename: common.filename, title: common.title, keywords: common.keywords, media_type: common.type };
-    }
+ const recordForPlatform = ({ file, meta }) => {
+  const p = platform || "General"; // ensures correct active platform
+  const common = {
+    filename: file.name,
+    title: meta.title,
+    keywords: meta.keywords.join(", "),
+    type: file.kind,
+    imageType,
   };
+
+  switch (p) {
+    case "Adobe Stock":
+      return {
+        Filename: common.filename,
+        Title: common.title,
+        Keywords: common.keywords,
+        Category: "",
+        Releases: "",
+        Illustration: imageType === "Vector" ? "Yes" : "",
+      };
+    case "Freepik":
+      return {
+        file: common.filename,
+        title: common.title,
+        tags: common.keywords,
+        license: "standard",
+        type: imageType.toLowerCase() || "none",
+      };
+    case "Shutterstock":
+      return {
+        Filename: common.filename,
+        Description: common.title,
+        Keywords: common.keywords,
+        Editorial: "no",
+        Category: "",
+      };
+    case "Vecteezy":
+      return {
+        file_name: common.filename,
+        title: common.title,
+        keywords: common.keywords,
+        media_type: common.type.toLowerCase(),
+      };
+    default:
+      return {
+        filename: common.filename,
+        title: common.title,
+        keywords: common.keywords,
+        media_type: common.type,
+      };
+  }
+};
 
   // ----------------- Generate & Export -----------------
   const [generated, setGenerated] = useState([]); // {fileId, meta}
