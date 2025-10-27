@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Custom global styles --- */
+html, body {
+  @apply bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4 {
+  @apply font-bold;
+}
+
+button {
+  @apply transition-colors duration-200;
+}
+
+input, textarea, select {
+  @apply focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-600;
+}
