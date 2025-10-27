@@ -367,14 +367,22 @@ export default function Page() {
 
               {/* CSV For */}
               <div className="mb-2">
-                <label className="text-sm font-medium block mb-2">CSV For</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {PLATFORMS.map(p => (
-                    <button key={p} onClick={() => setPlatform(p)} className={`px-3 py-2 rounded-lg border text-sm font-semibold ${platform === p ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-700 dark:border-slate-700" : "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600"}`}>
-                      {p}
-                    </button>
-                  ))}
-                </div>
+                 <label className="text-sm font-medium block mb-2">CSV For</label>
+<div className="grid grid-cols-2 gap-2">
+ {PLATFORMS.map(p => (
+  <button
+    key={p}
+    onClick={() => setPlatform(p)}
+    className={`px-3 py-2 rounded-lg border text-sm font-semibold transition-colors duration-200 ${
+      platform === p
+        ? "bg-indigo-600 text-white border-indigo-600 shadow-md dark:bg-indigo-500 dark:border-indigo-400"
+        : "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600"
+    }`}
+  >
+    {p}
+  </button>
+))} 
+</div>
               </div>
             </section>
           </aside>
