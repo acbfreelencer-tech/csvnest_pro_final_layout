@@ -170,8 +170,8 @@ const analyzeFileWithAI = async (file) => {
 
   try {
     const base = fromFilenameToWords(file.name);
-    const prompt = `Generate a descriptive title and ${kwCount} SEO keywords for this image named "${base}". Output as JSON with {title: "...", keywords: ["..."]}`;
-    
+    const prompt = `Generate a descriptive title and ${kwCount} SEO-friendly keywords for this image named "${base}". Output as JSON with { "title": "...", "keywords": ["..."] }`;
+
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=" + apiKey,
       {
@@ -183,18 +183,33 @@ const analyzeFileWithAI = async (file) => {
       }
     );
 
+    if (!response.ok) {
+      console.error("Gemini API request failed:", response.status, response.statusText);
+      return analyzeFromFilename(file);
+    }
+
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    const parsed = JSON.parse(text);
+    if (!text) throw new Error("Empty response from Gemini");
+
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      console.warn("Gemini JSON parsing failed, using fallback text.");
+      parsed = { title: base, keywords: base.split(/\s+/) };
+    }
+
     return {
-      title: buildTitle(parsed.title),
-      keywords: cleanKeywords(addBulkKeywords(parsed.keywords))
+      title: buildTitle(parsed.title || base),
+      keywords: cleanKeywords(addBulkKeywords(parsed.keywords || [])),
     };
   } catch (err) {
     console.error("Gemini AI failed:", err);
     return analyzeFromFilename(file);
   }
 };
+
   // ----------------- CSV Schema by Platform -----------------
  const recordForPlatform = ({ file, meta }) => {
   const p = platform || "General"; // ensures correct active platform
