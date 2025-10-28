@@ -326,6 +326,47 @@ try {
     }
     setGenerated(out);
   };
+// ---------------- Generate & Export ----------------
+const [generated, setGenerated] = useState([]); // {fileId, meta}
+
+// 1️⃣ Generate All
+const handleGenerateAll = async () => {
+  ...
+};
+
+// 2️⃣ 🧠 এখানে বসাও নতুন ফাংশন
+const handleRegenerate = async (fileId) => {
+  setFileStates((prev) =>
+    prev.map((f) =>
+      f.id === fileId ? { ...f, status: "pending" } : f
+    )
+  );
+
+  try {
+    const target = fileStates.find((f) => f.id === fileId);
+    const meta = await analyzeFileWithAI(target.file);
+
+    setFileStates((prev) =>
+      prev.map((f) =>
+        f.id === fileId
+          ? { ...f, title: meta.title, keywords: meta.keywords, status: "success" }
+          : f
+      )
+    );
+  } catch (err) {
+    console.error("Regeneration failed:", err);
+    setFileStates((prev) =>
+      prev.map((f) =>
+        f.id === fileId ? { ...f, status: "failed" } : f
+      )
+    );
+  }
+};
+
+// 3️⃣ Export ZIP (যেটা তোমার স্ক্রিনে আছে)
+const handleExportZip = async () => {
+  ...
+};
 
   const handleExportZip = async () => {
     if (!generated.length) return alert("Nothing to export. Generate first.");
@@ -477,6 +518,83 @@ try {
               </div>
             </section>
           </aside>
+{/* ---------- File Preview & Regenerate Section ---------- */}
+<section className="flex-1 overflow-y-auto space-y-4 p-4">
+  {fileStates.length === 0 ? (
+    <div className="text-center text-slate-400 py-10 border border-dashed rounded-xl">
+      <p>No files uploaded yet. Drag & drop files to start.</p>
+    </div>
+  ) : (
+    fileStates.map((f) => (
+      <div
+        key={f.id}
+        className="p-4 rounded-xl border bg-slate-50 dark:bg-slate-800 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-start"
+      >
+        {/* Thumbnail preview */}
+        <div className="w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden bg-white dark:bg-slate-700 border dark:border-slate-600 flex items-center justify-center">
+          <img
+            src={f.preview}
+            alt={f.name}
+            className="object-contain w-full h-full"
+          />
+        </div>
+
+        {/* File details */}
+        <div className="flex-1 space-y-2 w-full">
+          <p className="font-semibold text-slate-700 dark:text-slate-200 text-sm truncate">
+            {f.name}
+          </p>
+
+          {/* Title */}
+          <input
+            type="text"
+            placeholder="Generated title will appear here..."
+            value={f.title}
+            readOnly
+            className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100"
+          />
+
+          {/* Keywords */}
+          <textarea
+            placeholder="Generated keywords will appear here..."
+            value={f.keywords.join(", ")}
+            readOnly
+            rows={2}
+            className="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100 resize-none"
+          />
+
+          {/* Status & Regenerate */}
+          <div className="flex items-center justify-between mt-2">
+            {f.status === "pending" && (
+              <span className="text-xs text-yellow-500 font-medium">
+                ⏳ Generating...
+              </span>
+            )}
+            {f.status === "success" && (
+              <span className="text-xs text-green-500 font-medium">
+                ✅ Done
+              </span>
+            )}
+            {f.status === "failed" && (
+              <span className="text-xs text-red-500 font-medium">
+                ❌ Failed
+              </span>
+            )}
+
+            {f.status === "failed" && (
+              <button
+                onClick={() => handleRegenerate(f.id)}
+                className="text-xs px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-500 transition"
+              >
+                🔄 Regenerate
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</section>
 
           {/* Right Column */}
           <section className="lg:col-span-8 xl:col-span-9 space-y-5">
