@@ -218,9 +218,16 @@ try {
 }
 
     return {
-      title: buildTitle(parsed.title || base),
-      keywords: cleanKeywords(addBulkKeywords(parsed.keywords || [])),
-    };
+  title: buildTitle(parsed.title || base),
+  keywords: cleanKeywords(
+    addBulkKeywords(
+      parsed.keywords
+        ? parsed.keywords.flatMap(k => k.split(/[\s,;:/\-]+/))  // multi-word কে ভেঙে single-word করবে
+        : []
+    )
+  ),
+};
+
   } catch (err) {
     console.error("Gemini AI failed:", err);
     return analyzeFromFilename(file);
