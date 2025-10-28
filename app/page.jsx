@@ -137,10 +137,22 @@ export default function Page() {
   };
   const clampTitle = (str) => (str.length <= titleLen ? str : str.slice(0, Math.max(10, titleLen)).replace(/[\s\W]+\w*$/, ""));
   const cleanKeywords = (arr) => {
-    let list = arr.map(s => s.trim()).filter(Boolean).map(s => s.replace(/\s+/g, " "));
-    if (removeDup) list = uniqueList(list);
-    return list.slice(0, kwCount);
-  };
+  if (!Array.isArray(arr)) return [];
+
+  // সব কীওয়ার্ড একত্রে string বানানো
+  let text = arr.join(", ").toLowerCase();
+
+  // সব ভাঙা একক শব্দে (one-word keyword)
+  let words = text.split(/[\s,;:.\-_/]+/);
+
+  // ছোট ও অপ্রয়োজনীয় শব্দ বাদ
+  words = words.filter(w => w.length > 1 && /^[a-z0-9]+$/.test(w));
+
+  // ডুপ্লিকেট সরানো এবং kwCount পর্যন্ত সীমাবদ্ধ রাখা
+  let unique = [...new Set(words)];
+  return unique.slice(0, kwCount);
+};
+
   const addBulkKeywords = (baseKw) => {
     if (!bulkOn || !bulkText.trim()) return baseKw;
     const bulkList = bulkText.split(/[;,\n]/).map(s => s.trim()).filter(Boolean);
