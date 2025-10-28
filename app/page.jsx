@@ -170,7 +170,7 @@ const analyzeFileWithAI = async (file) => {
 
   try {
     const base = fromFilenameToWords(file.name);
-    const prompt = Generate a descriptive title and ${kwCount} SEO keywords for this image named "${base}". Output as JSON with {title: "...", keywords: ["..."]};
+    const prompt = `Generate a descriptive title and ${kwCount} SEO keywords for this image named "${base}". Output as JSON with {title: "...", keywords: ["..."]}`;
     
     const response = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey,
