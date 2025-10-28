@@ -55,7 +55,8 @@ export default function Page() {
       localStorage.removeItem("csvnest_user");
     }
   };
-
+// ---------------- FILE STATES ----------------
+const [fileStates, setFileStates] = useState([]); // 👈 এখানে বসাও
   // ----------------- API Key + Controls -----------------
   const [apiKey, setApiKey] = useState("");
   useEffect(() => {
