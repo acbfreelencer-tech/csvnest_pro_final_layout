@@ -193,12 +193,17 @@ const analyzeFileWithAI = async (file) => {
     if (!text) throw new Error("Empty response from Gemini");
 
     let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      console.warn("Gemini JSON parsing failed, using fallback text.");
-      parsed = { title: base, keywords: base.split(/\s+/) };
-    }
+try {
+  // Try to clean any non-JSON text returned by Gemini
+  const cleanText = text
+    .replace(/^[^\{]*/, "")   // Remove anything before first '{'
+    .replace(/[^\}]*$/, "");  // Remove anything after last '}'
+
+  parsed = JSON.parse(cleanText);
+} catch (err) {
+  console.warn("Gemini JSON parsing failed, using fallback text.", err);
+  parsed = { title: base, keywords: base.split(/\s+/) };
+}
 
     return {
       title: buildTitle(parsed.title || base),
