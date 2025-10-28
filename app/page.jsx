@@ -326,16 +326,9 @@ try {
     }
     setGenerated(out);
   };
-// ---------------- Generate & Export ----------------
-const [generated, setGenerated] = useState([]); // {fileId, meta}
-
-// 1️⃣ Generate All
-const handleGenerateAll = async () => {
-  ...
-};
-
-// 2️⃣ 🧠 এখানে বসাও নতুন ফাংশন
+// 🔁 Regenerate Function (Gemini retry handler)
 const handleRegenerate = async (fileId) => {
+  // Step 1: Update file status → pending
   setFileStates((prev) =>
     prev.map((f) =>
       f.id === fileId ? { ...f, status: "pending" } : f
@@ -343,9 +336,11 @@ const handleRegenerate = async (fileId) => {
   );
 
   try {
+    // Step 2: Find the file and regenerate using Gemini
     const target = fileStates.find((f) => f.id === fileId);
     const meta = await analyzeFileWithAI(target.file);
 
+    // Step 3: Update fileStates → success
     setFileStates((prev) =>
       prev.map((f) =>
         f.id === fileId
@@ -354,6 +349,7 @@ const handleRegenerate = async (fileId) => {
       )
     );
   } catch (err) {
+    // Step 4: If failed → set status failed
     console.error("Regeneration failed:", err);
     setFileStates((prev) =>
       prev.map((f) =>
@@ -363,10 +359,8 @@ const handleRegenerate = async (fileId) => {
   }
 };
 
+
 // 3️⃣ Export ZIP (যেটা তোমার স্ক্রিনে আছে)
-const handleExportZip = async () => {
-  ...
-};
 
   const handleExportZip = async () => {
     if (!generated.length) return alert("Nothing to export. Generate first.");
