@@ -97,12 +97,32 @@ const [fileStates, setFileStates] = useState([]); // 👈 এখানে বস
     return "OTHER";
   };
   const addFiles = (list) => {
-    const next = [...files];
-    for (const f of list) next.push({ id: crypto.randomUUID(), file: f, name: f.name, kind: classifyKind(f) });
-    const limited = next.slice(0, 1000);
-    setFiles(limited);
-    setProgress((p) => ({ ...p, uploaded: limited.length }));
-  };
+  const next = [...files];
+  for (const f of list)
+    next.push({
+      id: crypto.randomUUID(),
+      file: f,
+      name: f.name,
+      kind: classifyKind(f),
+    });
+
+  const limited = next.slice(0, 1000);
+  setFiles(limited);
+  setProgress((p) => ({ ...p, uploaded: limited.length }));
+
+  // ✅ নতুন অংশ (fileStates সেট করা)
+  setFileStates(
+    limited.map(f => ({
+      id: f.id,
+      name: f.name,
+      preview: URL.createObjectURL(f.file),
+      title: "",
+      keywords: [],
+      status: "pending",
+    }))
+  );
+};
+
   const onDrop = (e) => {
     e.preventDefault();
     addFiles(Array.from(e.dataTransfer.files || []));
