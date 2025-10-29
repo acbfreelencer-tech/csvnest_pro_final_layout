@@ -512,6 +512,56 @@ const handleRegenerate = async (fileId) => {
               </div>
             </section>
           </aside>
+          {/* ================= Upload & Progress ================= */}
+<section className="w-full space-y-4">
+  {/* Upload Files */}
+  <div className="border border-slate-700 rounded-xl p-5 bg-slate-900 shadow">
+    <h2 className="text-lg font-semibold text-white mb-2">Upload Files</h2>
+    <p className="text-slate-400 text-sm mb-3">
+      Drag & drop up to 1000 files, or click to browse.
+    </p>
+
+    <div className="flex flex-wrap gap-3">
+      <button className="px-5 py-2 rounded-md bg-sky-600 hover:bg-sky-700 text-white">SVG</button>
+      <button className="px-5 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white">IMAGE (JPG, PNG)</button>
+      <button className="px-5 py-2 rounded-md bg-amber-500 hover:bg-amber-600 text-white">VIDEO</button>
+      <button className="ml-auto px-4 py-2 rounded-md bg-slate-700 hover:bg-slate-600 text-white">Browse</button>
+    </div>
+  </div>
+
+  {/* Progress */}
+  <div className="border border-slate-700 rounded-xl p-5 bg-slate-900 shadow">
+    <h2 className="text-lg font-semibold text-white mb-2">Progress</h2>
+
+    <div className="grid grid-cols-3 gap-3 mb-3 text-center text-white">
+      <div className="p-2 rounded bg-slate-800">
+        <p className="text-xs text-slate-400">Uploaded</p>
+        <p className="text-lg font-semibold">{progress.uploaded}</p>
+      </div>
+      <div className="p-2 rounded bg-slate-800">
+        <p className="text-xs text-slate-400">Success</p>
+        <p className="text-lg font-semibold text-green-400">{progress.success}</p>
+      </div>
+      <div className="p-2 rounded bg-slate-800">
+        <p className="text-xs text-slate-400">Failed</p>
+        <p className="text-lg font-semibold text-red-400">{progress.failed}</p>
+      </div>
+    </div>
+
+    <div className="flex flex-wrap gap-3 justify-center">
+      <button onClick={clearAll} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded text-white">
+        Clear All
+      </button>
+      <button onClick={handleGenerateAll} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded text-white">
+        Generate All
+      </button>
+      <button onClick={handleExportZip} className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded text-white">
+        Export CSV (ZIP)
+      </button>
+    </div>
+  </div>
+</section>
+
 {/* ---------- File Preview & Regenerate Section ---------- */}
 <section className="flex-1 overflow-y-auto space-y-4 p-4">
   {fileStates.length === 0 ? (
